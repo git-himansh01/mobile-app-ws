@@ -3,16 +3,21 @@ package com.learning.mobileappws.ui.controller;
 import com.learning.mobileappws.ui.model.request.UserRequestModel;
 import com.learning.mobileappws.ui.model.response.UserRest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Null;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("users") //http://localhost:8080/users
 public class UserController {
+    Map<String,UserRest> userRestMap;
 //required = false making the request param optional
     @GetMapping
     public String getUsers(@RequestParam(value="page", defaultValue="1") int page, @RequestParam(value="limit", defaultValue="25") int limit, @RequestParam(value="sort", defaultValue="desc", required=false ) String sort){
@@ -31,12 +36,18 @@ public class UserController {
 
 @GetMapping(path = "/{userId}", produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
 public ResponseEntity<UserRest> getUser(@PathVariable(value="userId") String userId) {
-    UserRest userRest = new UserRest();
-    userRest.setFirstName("Himanshu");
-    userRest.setLastName("Gupta");
-    userRest.setEmail("waystohimanshu@gmail.com");
-    userRest.setUserId(userId);
-    return new ResponseEntity<UserRest>(userRest, HttpStatus.OK);
+//    UserRest userRest = new UserRest();
+//    userRest.setFirstName("Himanshu");
+//    userRest.setLastName("Gupta");
+//    userRest.setEmail("waystohimanshu@gmail.com");
+//    userRest.setUserId(userId);
+//    return new ResponseEntity<UserRest>(userRest, HttpStatus.OK);
+
+    if (userRestMap.containsKey(userId)) {
+        return new ResponseEntity<UserRest>(userRestMap.get(userId), HttpStatus.OK);
+    }else{
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
     @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
@@ -46,6 +57,12 @@ public ResponseEntity<UserRest> getUser(@PathVariable(value="userId") String use
         userRest.setLastName(userRequestModel.getLastName());
         userRest.setEmail(userRequestModel.getEmail());
         //userRest.setUserId(userId);
+        //below code for temporary storage
+        String userId= UUID.randomUUID().toString();
+        userRest.setUserId(userId);
+        if(userRestMap== null) userRestMap=new HashMap<>();
+        userRestMap.put(userId, userRest);
+
         return new ResponseEntity<UserRest>(userRest, HttpStatus.CREATED);
     }
     @PutMapping
