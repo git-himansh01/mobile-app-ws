@@ -1,5 +1,6 @@
 package com.learning.mobileappws.ui.controller;
 
+import com.learning.mobileappws.ui.model.request.UpdateUserRequestModel;
 import com.learning.mobileappws.ui.model.request.UserRequestModel;
 import com.learning.mobileappws.ui.model.response.UserRest;
 import jakarta.validation.Valid;
@@ -65,13 +66,21 @@ public ResponseEntity<UserRest> getUser(@PathVariable(value="userId") String use
 
         return new ResponseEntity<UserRest>(userRest, HttpStatus.CREATED);
     }
-    @PutMapping
-    public String updateUser(){
-        return "Update user was called";
+    @PutMapping(path = "/{userId}", consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
+            produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<UserRest> updateUser(@PathVariable String userId, @RequestBody @Valid UpdateUserRequestModel updateUserRequestModel){
+        UserRest storedUserDetails = userRestMap.get(userId);
+        storedUserDetails.setFirstName(updateUserRequestModel.getFirstName());
+        storedUserDetails.setLastName(updateUserRequestModel.getLastName());
+        userRestMap.put(userId,storedUserDetails );
+      //  return storedUserDetails;
+        return new ResponseEntity<UserRest>(storedUserDetails, HttpStatus.OK);
     }
-    @DeleteMapping
-    public String deleteUser(){
-        return "Delete user was called";
+    @DeleteMapping(path = "/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable String userId){
+        userRestMap.remove(userId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
     }
 
 }
