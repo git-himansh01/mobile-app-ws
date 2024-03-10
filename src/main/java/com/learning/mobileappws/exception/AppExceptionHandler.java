@@ -12,8 +12,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.Date;
-
-
 @ControllerAdvice
 public class AppExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value={Exception.class})
@@ -26,8 +24,6 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
      //   return new ResponseEntity<>(exp, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
         return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-
     @ExceptionHandler(value={UserServiceException.class})
     public ResponseEntity<Object> handleUserServiceException(UserServiceException exp, WebRequest request){
         String errorMessageDescription = exp.getLocalizedMessage();

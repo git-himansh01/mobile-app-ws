@@ -1,11 +1,14 @@
 package com.learning.mobileappws.ui.controller;
 
 import com.learning.mobileappws.exception.UserServiceException;
+import com.learning.mobileappws.service.UserService;
+import com.learning.mobileappws.service.impl.UserServiceImpl;
 import com.learning.mobileappws.ui.model.request.UpdateUserRequestModel;
 import com.learning.mobileappws.ui.model.request.UserRequestModel;
 import com.learning.mobileappws.ui.model.response.UserRest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Null;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +22,8 @@ import java.util.UUID;
 @RestController
 @RequestMapping("users") //http://localhost:8080/users
 public class UserController {
+    @Autowired
+     UserService userService;
     Map<String,UserRest> userRestMap;
 //required = false making the request param optional
     @GetMapping
@@ -46,7 +51,7 @@ public ResponseEntity<UserRest> getUser(@PathVariable(value="userId") String use
 //    return new ResponseEntity<UserRest>(userRest, HttpStatus.OK);
 
     //Even if we don't make exception class, this message will override the default message
-//if(true) throw new UserServiceException("A User Service Exception is thrown");
+// if(true) throw new UserServiceException("A User Service Exception is thrown");
     if (userRestMap.containsKey(userId)) {
         return new ResponseEntity<UserRest>(userRestMap.get(userId), HttpStatus.OK);
     }else{
@@ -58,18 +63,18 @@ public ResponseEntity<UserRest> getUser(@PathVariable(value="userId") String use
     @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<UserRest> createUser(@RequestBody @Valid UserRequestModel userRequestModel){
-        UserRest userRest = new UserRest();
-        userRest.setFirstName(userRequestModel.getFirstName());
-        userRest.setLastName(userRequestModel.getLastName());
-        userRest.setEmail(userRequestModel.getEmail());
-        //userRest.setUserId(userId);
-        //below code for temporary storage
-        String userId= UUID.randomUUID().toString();
-        userRest.setUserId(userId);
-        if(userRestMap== null) userRestMap=new HashMap<>();
-        userRestMap.put(userId, userRest);
+//        UserRest userRest = new UserRest();
+//        userRest.setFirstName(userRequestModel.getFirstName());
+//        userRest.setLastName(userRequestModel.getLastName());
+//        userRest.setEmail(userRequestModel.getEmail());
+//        //userRest.setUserId(userId);
+//        //below code for temporary storage
+//        String userId= UUID.randomUUID().toString();
+//        userRest.setUserId(userId);
+//        if(userRestMap== null) userRestMap=new HashMap<>();
+//        userRestMap.put(userId, userRest);
 
-        return new ResponseEntity<UserRest>(userRest, HttpStatus.CREATED);
+        return new ResponseEntity<UserRest>(userService.createUser(userRequestModel), HttpStatus.CREATED);
     }
     @PutMapping(path = "/{userId}", consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
