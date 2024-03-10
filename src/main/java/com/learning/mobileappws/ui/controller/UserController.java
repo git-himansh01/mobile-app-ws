@@ -1,5 +1,6 @@
 package com.learning.mobileappws.ui.controller;
 
+import com.learning.mobileappws.exception.UserServiceException;
 import com.learning.mobileappws.ui.model.request.UpdateUserRequestModel;
 import com.learning.mobileappws.ui.model.request.UserRequestModel;
 import com.learning.mobileappws.ui.model.response.UserRest;
@@ -44,12 +45,16 @@ public ResponseEntity<UserRest> getUser(@PathVariable(value="userId") String use
 //    userRest.setUserId(userId);
 //    return new ResponseEntity<UserRest>(userRest, HttpStatus.OK);
 
+    //Even if we don't make exception class, this message will override the default message
+//if(true) throw new UserServiceException("A User Service Exception is thrown");
     if (userRestMap.containsKey(userId)) {
         return new ResponseEntity<UserRest>(userRestMap.get(userId), HttpStatus.OK);
     }else{
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
+
+
     @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<UserRest> createUser(@RequestBody @Valid UserRequestModel userRequestModel){
@@ -80,7 +85,6 @@ public ResponseEntity<UserRest> getUser(@PathVariable(value="userId") String use
     public ResponseEntity<Void> deleteUser(@PathVariable String userId){
         userRestMap.remove(userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
     }
 
 }
